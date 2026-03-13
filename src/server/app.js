@@ -1,5 +1,5 @@
 import { createMcpExpressApp } from '@modelcontextprotocol/sdk/server/express.js';
-import { createServer } from './mcp.js';
+import { createMcpServer } from './mcp.js';
 import { createTransport } from './transport.js';
 
 export function createApp() {
@@ -10,9 +10,14 @@ export function createApp() {
     res.status(404).json({ error: 'Not Found' });
   });
 
-  app.post('/mcp', async (req, res) => {
-    const server = createServer();
+  async function handleMcpRequest(req, res) {
     const transport = createTransport();
+    const server = createMcpServer();
+
+    res.on('close', () => {
+      transport.close();
+      server.close();
+    });
 
     try {
       await server.connect(transport);
@@ -29,13 +34,10 @@ export function createApp() {
           id: null,
         });
       }
-    } finally {
-      res.on('close', () => {
-        transport.close();
-        server.close();
-      });
     }
-  });
+  }
+
+  app.post('/mcp', handleMcpRequest);
 
   app.get('/mcp', (_req, res) => {
     res.status(405).json({
