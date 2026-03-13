@@ -3,10 +3,7 @@
   "version": "1.10.0",
   "type": "module",
   "description": "Cloud Run MCP deployment tool",
-  "main": "mcp-server.js",
-  "bin": {
-    "cloud-run-mcp": "mcp-server.js"
-  },
+  "main": "src/index.js",
   "scripts": {
     "deploy": "gcloud run deploy cloud-run-mcp --source . --no-invoker-iam-check",
     "test:workflows": "node --test test/need-gcp/workflows/*.test.js",
@@ -19,10 +16,11 @@
     "test:tools": "node --test test/local/tools.test.js",
     "test:local": "node --test test/local/*.test.js test/local/**/*.test.js",
     "test": "c8 --check-coverage npm run test:local",
-    "mcp-inspector": "npx @modelcontextprotocol/inspector node mcp-server.js",
-    "start": "node mcp-server.js",
+    "mcp-inspector": "npx @modelcontextprotocol/inspector node src/index.js",
+    "start": "node src/index.js",
     "lint:check": "prettier --check .",
-    "lint": "prettier --write ."
+    "lint": "prettier --write .",
+    "start:dev": "node --watch src/index.js"
   },
   "repository": {
     "type": "git",
@@ -54,7 +52,8 @@
     "express": "^5.1.0",
     "google-proto-files": "^5.0.0",
     "googleapis": "^171.4.0",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "firebase-admin": "^13.0.0"
   },
   "devDependencies": {
     "c8": "^10.1.3",
